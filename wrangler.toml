@@ -1,0 +1,12 @@
+compatibility_date = "2022-02-21"
+name = "my-worker-dev"
+workers_dev = true
+main = "src/index.ts"
+compatibility_flags = ["streams_enable_constructors"]
+
+[vars]
+BUCKET_NAME = "studlancer-images"
+TABLE_NAME = "Studlancer"
+REGION = "ap-southeast-2"
+
+
