@@ -1,5 +1,6 @@
 export const typeDefs = /* GraphQL */ `
   scalar Date
+  scalar File
   type User {
     PK: String!
     SK: String!

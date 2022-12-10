@@ -1,4 +1,5 @@
 scalar Date
+scalar File
 type User {
   PK: String!
   SK: String!
