@@ -1,32 +1,46 @@
+import { Update } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
-  UpdateCommand,
-  UpdateCommandInput,
+  TransactWriteCommand,
+  TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
-
-type UpdateQuestAttribute = {
-  creatorId: string;
+import { NativeAttributeValue } from "@aws-sdk/util-dynamodb";
+type UpdateQuestTransaction = {
   questId: string;
   attribute: string;
-  value: string | number;
+  text?: string;
+  number?: number;
+};
+type UpdateItemType = {
+  Update?: Omit<Update, "Key" | "ExpressionAttributeValues"> & {
+    Key: Record<string, NativeAttributeValue> | undefined;
+    ExpressionAttributeValues?: Record<string, NativeAttributeValue>;
+  };
 };
 export const updateQuestAttributes = async (
-  props: UpdateQuestAttribute,
+  transactions: UpdateQuestTransaction[],
+
+  creatorId: string,
   client: DynamoDBDocumentClient,
   TableName: string
 ) => {
-  // Set the parameters.
-  const { questId, attribute, value, creatorId } = props;
+  const TransactItems: UpdateItemType[] = transactions.map((t) => {
+    return {
+      Update: {
+        TableName,
 
-  const params: UpdateCommandInput = {
-    TableName,
-
-    Key: { PK: `USER#${creatorId}`, SK: `#QUEST#${questId}` },
-    UpdateExpression: `set ${attribute} = :value`,
-    ExpressionAttributeValues: { ":value": value },
+        Key: { PK: `USER#${creatorId}`, SK: `#QUEST#${t.questId}` },
+        UpdateExpression: `set ${t.attribute} = :value`,
+        ExpressionAttributeValues: { ":value": t.text ? t.text : t.number },
+      },
+    };
+  });
+  const params: TransactWriteCommandInput = {
+    TransactItems,
   };
 
-  const result = await client.send(new UpdateCommand(params));
+  const result = await client.send(new TransactWriteCommand(params));
+  console.log();
   if (result) {
     return true;
   }

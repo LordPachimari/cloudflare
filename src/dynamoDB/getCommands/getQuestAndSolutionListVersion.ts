@@ -5,21 +5,20 @@ import {
   ScanCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Quest } from "../../generated/graphql";
-interface GetQuestProps {
-  questId: string;
-  userId: string;
-}
-export const getQuest = async (
-  props: GetQuestProps,
+
+type Version = {
+  number: number;
+};
+export const getQuestAndSolutionListVersion = async (
+  userId: string,
   client: DynamoDBDocumentClient,
   TableName: string
 ) => {
-  const { userId, questId } = props;
   // Set the parameters.
   const params: GetCommandInput = {
     TableName,
 
-    Key: { PK: `USER#${userId}`, SK: `#QUEST#${questId}` },
+    Key: { PK: `USER#${userId}`, SK: `VERSION` },
   };
 
   const result = await client.send(new GetCommand(params));
@@ -27,8 +26,8 @@ export const getQuest = async (
 
   if (result.Item) {
     // Return the retrieved item
-    const quest = result.Item as Quest;
-    return quest;
+    const versionObject = result.Item as Version;
+    return versionObject.number;
   } else {
     return null;
   }

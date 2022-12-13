@@ -47,11 +47,11 @@ const yoga = createYoga<MyContext>({
         secretAccessKey: env.SECRET_ACCESS_KEY,
       },
     });
-    const marshallOptions = {
-      removeUndefinedValues: true, // false, by default.
-    };
-    const translateConfig = { marshallOptions };
-    const ddbDocClient = DynamoDBDocumentClient.from(client, translateConfig);
+    // const marshallOptions = {
+    //   convertEmptyValues: true, // false, by default.
+    // };
+    // const translateConfig = { marshallOptions };
+    const ddbDocClient = DynamoDBDocumentClient.from(client);
     return { client: ddbDocClient };
   },
 });

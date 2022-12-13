@@ -19,7 +19,7 @@ export const updateQuestDescription = async (
   const params: UpdateCommandInput = {
     TableName,
 
-    Key: { PK: `USER#${creatorId}`, SK: `#QUEST${questId}` },
+    Key: { PK: `USER#${creatorId}`, SK: `#QUEST#${questId}` },
     UpdateExpression: "set description = :value",
     ExpressionAttributeValues: { ":value": description },
   };

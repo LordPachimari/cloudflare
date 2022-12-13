@@ -1,7 +1,8 @@
 import { getQuest } from "../dynamoDB/getCommands/getQuest";
+import { getQuestAndSolutionListVersion } from "../dynamoDB/getCommands/getQuestAndSolutionListVersion";
 import { getUser } from "../dynamoDB/getCommands/getUser";
 import { publishedQuests } from "../dynamoDB/query/publishedQuests";
-import { WorkspaceQuests } from "../dynamoDB/query/workspaceQuests";
+import { workspaceQuestAndSolutionList } from "../dynamoDB/query/workspaceQuestAndSolutionList";
 import { QueryResolvers, Quest, User } from "../generated/graphql";
 
 // const user: User = {
@@ -12,7 +13,16 @@ import { QueryResolvers, Quest, User } from "../generated/graphql";
 //   balance: 0,
 //   role: "User",
 // };
-const creatorId = "565fcb75-b88a-48f4-b119-fe246d9fb8fe";
+const quest: Quest = {
+  id: "46b01817-4754-423c-bcf1-da3e761542bd",
+  title: "fuckoff",
+  topic: "marketing",
+  subtopic: "social media",
+  reward: 0,
+  slots: 0,
+};
+const quests = [quest];
+const userId = "565fcb75-b88a-48f4-b119-fe246d9fb8fe";
 const Queries: QueryResolvers = {
   //***** User query *****
   userById: async (_, args, context) => {
@@ -26,22 +36,19 @@ const Queries: QueryResolvers = {
     }
   },
   //***** Quest query *****
-
   workspaceQuest: async (_, { questId }, context) => {
     try {
       // const creatorId = context.request.headers.get("Authorization");
-      const quest = await getQuest(
-        { creatorId, questId },
-        context.client,
-        context.TABLE_NAME
-      );
+      // const quest = await getQuest(
+      //   { userId, questId },
+      //   context.client,
+      //   context.TABLE_NAME
+      // );
 
       if (!quest) {
         return null;
       }
-      if (quest?.creatorId !== creatorId) {
-        return null;
-      }
+
       console.log("quest", quest);
 
       return quest;
@@ -50,19 +57,39 @@ const Queries: QueryResolvers = {
       return null;
     }
   },
-  workspaceQuests: async (_, { userId }, context) => {
+
+  workspaceQuestAndSolutionList: async (_, { userId }, context) => {
     try {
-      const quests = await WorkspaceQuests(
-        // context.request.headers.get("Authorization"),
-        creatorId,
-        context.client,
-        context.TABLE_NAME
-      );
+      // const quests = await workspaceQuestAndSolutionList(
+      //   // context.request.headers.get("Authorization"),
+      //   userId,
+      //   context.client,
+      //   context.TABLE_NAME
+      // );
 
       if (!quests) {
         return null;
       }
       return quests;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  },
+  workspaceQuestAndSolutionListVersion: async (_, args, context) => {
+    try {
+      // const version = await getQuestAndSolutionListVersion(
+      //   // context.request.headers.get("Authorization"),
+      //   userId,
+      //   context.client,
+      //   context.TABLE_NAME
+      // );
+      const version = 1;
+
+      if (!version) {
+        return null;
+      }
+      return version;
     } catch (error) {
       console.log(error);
       return null;
@@ -99,7 +126,7 @@ const Queries: QueryResolvers = {
     const publishedQuest = await getQuest(
       // { creatorId: context.request.headers.get("Authorization"), questId: id },
 
-      { creatorId, questId: id },
+      { userId, questId: id },
       context.client,
       context.TABLE_NAME
     );

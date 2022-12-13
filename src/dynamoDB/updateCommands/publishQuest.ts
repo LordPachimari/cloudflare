@@ -21,7 +21,7 @@ export const publishQuest = async (
     TransactItems: [
       {
         ConditionCheck: {
-          Key: { PK: `USER#${creatorId}`, SK: `#QUEST${questId}` },
+          Key: { PK: `USER#${creatorId}`, SK: `#QUEST#${questId}` },
           TableName,
           ConditionExpression: "#published = :published",
           ExpressionAttributeNames: { "#published": "published" },

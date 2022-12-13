@@ -14,14 +14,15 @@ export type Scalars = {
   Int: number;
   Float: number;
   Date: any;
+  File: any;
 };
 
 export type Comment = {
   __typename?: 'Comment';
-  PK: Scalars['String'];
-  SK: Scalars['String'];
-  createdAt: Scalars['Date'];
-  creatorId: Scalars['String'];
+  PK?: Maybe<Scalars['String']>;
+  SK?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['Date']>;
+  creatorId?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
 };
 
@@ -59,10 +60,7 @@ export type MutationPublishQuestArgs = {
 
 
 export type MutationUpdateQuestAttributesArgs = {
-  attribute: Scalars['String'];
-  number?: InputMaybe<Scalars['Int']>;
-  questId: Scalars['String'];
-  text?: InputMaybe<Scalars['String']>;
+  updateQuestTransactions?: InputMaybe<Array<InputMaybe<UpdateQuestTransaction>>>;
 };
 
 
@@ -91,7 +89,8 @@ export type Query = {
   userById?: Maybe<User>;
   userByUsername?: Maybe<User>;
   workspaceQuest?: Maybe<Quest>;
-  workspaceQuests?: Maybe<Array<Maybe<Quest>>>;
+  workspaceQuestAndSolutionList?: Maybe<Array<Maybe<Quest>>>;
+  workspaceQuestAndSolutionListVersion?: Maybe<Scalars['Int']>;
 };
 
 
@@ -126,16 +125,21 @@ export type QueryWorkspaceQuestArgs = {
 };
 
 
-export type QueryWorkspaceQuestsArgs = {
+export type QueryWorkspaceQuestAndSolutionListArgs = {
+  userId: Scalars['String'];
+};
+
+
+export type QueryWorkspaceQuestAndSolutionListVersionArgs = {
   userId: Scalars['String'];
 };
 
 export type Quest = {
   __typename?: 'Quest';
-  PK: Scalars['String'];
-  SK: Scalars['String'];
-  createdAt: Scalars['Date'];
-  creatorId: Scalars['ID'];
+  PK?: Maybe<Scalars['String']>;
+  SK?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['Date']>;
+  creatorId?: Maybe<Scalars['ID']>;
   description?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   published?: Maybe<Scalars['Boolean']>;
@@ -145,6 +149,7 @@ export type Quest = {
   subtopic?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
   topic?: Maybe<Scalars['String']>;
+  version?: Maybe<Scalars['Int']>;
 };
 
 export type Subscription = {
@@ -157,19 +162,26 @@ export type SubscriptionQuestPublishedArgs = {
   publisherId: Scalars['String'];
 };
 
+export type UpdateQuestTransaction = {
+  attribute: Scalars['String'];
+  number?: InputMaybe<Scalars['Int']>;
+  questId: Scalars['String'];
+  text?: InputMaybe<Scalars['String']>;
+};
+
 export type User = {
   __typename?: 'User';
-  PK: Scalars['String'];
-  SK: Scalars['String'];
+  PK?: Maybe<Scalars['String']>;
+  SK?: Maybe<Scalars['String']>;
   about?: Maybe<Scalars['String']>;
-  balance: Scalars['Int'];
-  createdAt: Scalars['Date'];
+  balance?: Maybe<Scalars['Int']>;
+  createdAt?: Maybe<Scalars['Date']>;
   email?: Maybe<Scalars['String']>;
-  experience: Scalars['Int'];
+  experience?: Maybe<Scalars['Int']>;
   fullName?: Maybe<Scalars['String']>;
   id: Scalars['String'];
-  level: Scalars['Int'];
-  role: Scalars['String'];
+  level?: Maybe<Scalars['Int']>;
+  role?: Maybe<Scalars['String']>;
   subtopics?: Maybe<Array<Maybe<Scalars['String']>>>;
   topics?: Maybe<Array<Maybe<Scalars['String']>>>;
   username?: Maybe<Scalars['String']>;
@@ -247,6 +259,7 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Comment: ResolverTypeWrapper<Comment>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
+  File: ResolverTypeWrapper<Scalars['File']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   LastEvaluatedKey: LastEvaluatedKey;
@@ -257,6 +270,7 @@ export type ResolversTypes = {
   Quest: ResolverTypeWrapper<Quest>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Subscription: ResolverTypeWrapper<{}>;
+  UpdateQuestTransaction: UpdateQuestTransaction;
   User: ResolverTypeWrapper<User>;
 };
 
@@ -265,6 +279,7 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   Comment: Comment;
   Date: Scalars['Date'];
+  File: Scalars['File'];
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   LastEvaluatedKey: LastEvaluatedKey;
@@ -275,14 +290,15 @@ export type ResolversParentTypes = {
   Quest: Quest;
   String: Scalars['String'];
   Subscription: {};
+  UpdateQuestTransaction: UpdateQuestTransaction;
   User: User;
 };
 
 export type CommentResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = {
-  PK?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  SK?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  creatorId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  PK?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  SK?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  creatorId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -291,12 +307,16 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'Date';
 }
 
+export interface FileScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['File'], any> {
+  name: 'File';
+}
+
 export type MutationResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createQuest?: Resolver<Maybe<ResolversTypes['Quest']>, ParentType, ContextType, RequireFields<MutationCreateQuestArgs, 'creatorId' | 'id'>>;
   createUser?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'userId'>>;
   publishQuest?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationPublishQuestArgs, 'id'>>;
   test?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  updateQuestAttributes?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationUpdateQuestAttributesArgs, 'attribute' | 'questId'>>;
+  updateQuestAttributes?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, Partial<MutationUpdateQuestAttributesArgs>>;
   updateQuestDescription?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationUpdateQuestDescriptionArgs, 'description' | 'questId'>>;
 };
 
@@ -319,14 +339,15 @@ export type QueryResolvers<ContextType = MyContext, ParentType extends Resolvers
   userById?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserByIdArgs, 'id'>>;
   userByUsername?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserByUsernameArgs, 'username'>>;
   workspaceQuest?: Resolver<Maybe<ResolversTypes['Quest']>, ParentType, ContextType, RequireFields<QueryWorkspaceQuestArgs, 'questId' | 'userId'>>;
-  workspaceQuests?: Resolver<Maybe<Array<Maybe<ResolversTypes['Quest']>>>, ParentType, ContextType, RequireFields<QueryWorkspaceQuestsArgs, 'userId'>>;
+  workspaceQuestAndSolutionList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Quest']>>>, ParentType, ContextType, RequireFields<QueryWorkspaceQuestAndSolutionListArgs, 'userId'>>;
+  workspaceQuestAndSolutionListVersion?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryWorkspaceQuestAndSolutionListVersionArgs, 'userId'>>;
 };
 
 export type QuestResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Quest'] = ResolversParentTypes['Quest']> = {
-  PK?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  SK?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  creatorId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  PK?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  SK?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  creatorId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   published?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
@@ -336,6 +357,7 @@ export type QuestResolvers<ContextType = MyContext, ParentType extends Resolvers
   subtopic?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   topic?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  version?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -344,17 +366,17 @@ export type SubscriptionResolvers<ContextType = MyContext, ParentType extends Re
 };
 
 export type UserResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  PK?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  SK?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  PK?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  SK?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   about?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  balance?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  balance?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  experience?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  experience?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   fullName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  level?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  role?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  level?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  role?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   subtopics?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   topics?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   username?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -364,6 +386,7 @@ export type UserResolvers<ContextType = MyContext, ParentType extends ResolversP
 export type Resolvers<ContextType = MyContext> = {
   Comment?: CommentResolvers<ContextType>;
   Date?: GraphQLScalarType;
+  File?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
   PublishedQuests?: PublishedQuestsResolvers<ContextType>;

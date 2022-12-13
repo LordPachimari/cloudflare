@@ -5,7 +5,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { Quest } from "../../generated/graphql";
 
-export const WorkspaceQuests = async (
+export const workspaceQuestAndSolutionList = async (
   creatorId: string,
   client: DynamoDBDocumentClient,
   TableName: string
@@ -15,12 +15,11 @@ export const WorkspaceQuests = async (
   const params: QueryCommandInput = {
     TableName,
 
-    KeyConditionExpression: "#pk = :pk AND #sk < :sk",
+    KeyConditionExpression: "#pk = :pk",
 
-    ExpressionAttributeNames: { "#pk": "PK", "#sk": "SK" },
+    ExpressionAttributeNames: { "#pk": "PK" },
     ExpressionAttributeValues: {
       ":pk": `USER#${creatorId}`,
-      ":sk": `USER#${creatorId}`,
     },
     ScanIndexForward: true,
 
@@ -30,10 +29,8 @@ export const WorkspaceQuests = async (
   if (data.Items?.length === 0) {
     return null;
   } else {
-    const workspaceQuests = data.Items as Quest[];
-    workspaceQuests.pop();
-    console.log("workspaceQuests", workspaceQuests);
-
-    return workspaceQuests;
+    const workspaceQuestAndSolutionList = data.Items as Quest[];
+    workspaceQuestAndSolutionList.pop();
+    return workspaceQuestAndSolutionList;
   }
 };

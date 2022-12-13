@@ -2,24 +2,25 @@ export const typeDefs = /* GraphQL */ `
   scalar Date
   scalar File
   type User {
-    PK: String!
-    SK: String!
+    PK: String
+    SK: String
     id: String!
     username: String
     fullName: String
     email: String
-    role: String!
+    role: String
     about: String
-    balance: Int!
-    level: Int!
-    experience: Int!
+    balance: Int
+    level: Int
+    experience: Int
     topics: [String]
     subtopics: [String]
-    createdAt: Date!
+    createdAt: Date
   }
   type Quest {
-    PK: String!
-    SK: String!
+    version: Int
+    PK: String
+    SK: String
     id: String!
     title: String
     topic: String
@@ -29,17 +30,17 @@ export const typeDefs = /* GraphQL */ `
     slots: Int
     published: Boolean
     publishedAt: Date
-    creatorId: ID!
-    createdAt: Date!
+    creatorId: ID
+    createdAt: Date
   }
 
   type Comment {
-    PK: String!
-    SK: String!
+    PK: String
+    SK: String
     id: String
-    creatorId: String!
+    creatorId: String
 
-    createdAt: Date!
+    createdAt: Date
   }
   type PublishedQuests {
     nodes: [Quest]
@@ -55,24 +56,32 @@ export const typeDefs = /* GraphQL */ `
     title: String!
     creatorId: String!
   }
+
+  input UpdateQuestTransaction {
+    questId: String!
+    attribute: String!
+    text: String
+    number: Int
+  }
+
   type Query {
     me(id: String!): User
     userByUsername(username: String!): User
     userById(id: String!): User
 
     workspaceQuest(questId: String!, userId: String!): Quest
-    workspaceQuests(userId: String!): [Quest]
+    workspaceQuestAndSolutionList(userId: String!): [Quest]
+
+    workspaceQuestAndSolutionListVersion(userId: String!): Int
     publishedQuests(after: LastEvaluatedKey): PublishedQuests
     publishedQuest(id: String!): Quest
   }
+
   type Mutation {
     createUser(userId: String!): Boolean
     createQuest(id: String!, creatorId: String!): Quest
     updateQuestAttributes(
-      questId: String!
-      attribute: String!
-      text: String
-      number: Int
+      updateQuestTransactions: [UpdateQuestTransaction]
     ): Boolean
     updateQuestDescription(questId: String!, description: String!): Boolean
     publishQuest(id: String!): Boolean

@@ -38,6 +38,12 @@ const Mutations: MutationResolvers = {
       PK: `USER#${creatorId}`,
       SK: `#QUEST#${id}`,
       id,
+      title: "",
+      subtopic: "",
+      topic: "",
+      reward: 0,
+      description: "",
+      slots: 0,
 
       published: false,
       creatorId,
@@ -58,40 +64,14 @@ const Mutations: MutationResolvers = {
     }
   },
   updateQuestAttributes: async (_, args, context) => {
-    const { attribute, questId, number, text } = args;
     try {
-      if (number) {
-        const result = await updateQuestAttributes(
-          {
-            questId,
-            attribute,
-            value: number,
-            creatorId,
-            // creatorId: context.request.headers.get("Authorization"),
-          },
-          context.client,
-          context.TABLE_NAME
-        );
-        if (result) {
-          return true;
-        }
-        return false;
-      } else if (text) {
-        const result = await updateQuestAttributes(
-          {
-            questId,
-            attribute,
-            value: text,
-            creatorId,
-            // creatorId: context.request.headers.get("Authorization"),
-          },
-          context.client,
-          context.TABLE_NAME
-        );
-        return result;
-      } else {
-        return false;
-      }
+      const result = await updateQuestAttributes(
+        args.updateQuestTransactions,
+        creatorId,
+        context.client,
+        context.TABLE_NAME
+      );
+      return result;
     } catch (error) {
       console.log(error);
       return false;
