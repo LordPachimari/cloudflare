@@ -1,8 +1,10 @@
 import {
   DynamoDBDocumentClient,
-  UpdateCommand,
+  TransactWriteCommand,
+  TransactWriteCommandInput,
   UpdateCommandInput,
 } from "@aws-sdk/lib-dynamodb";
+import { UpdateItemType } from "../../utils/types";
 
 type UpdateQuestDescription = {
   creatorId: string;
@@ -16,15 +18,38 @@ export const updateQuestDescription = async (
 ) => {
   // Set the parameters.
   const { questId, description, creatorId } = props;
-  const params: UpdateCommandInput = {
-    TableName,
 
-    Key: { PK: `USER#${creatorId}`, SK: `#QUEST#${questId}` },
-    UpdateExpression: "set description = :value",
-    ExpressionAttributeValues: { ":value": description },
+  const TransactItems: UpdateItemType[] = [
+    {
+      Update: {
+        TableName,
+
+        Key: { PK: `USER#${creatorId}`, SK: `#QUEST#${questId}` },
+        UpdateExpression: "set description = :value",
+        ExpressionAttributeValues: { ":value": description },
+      },
+    },
+    {
+      Update: {
+        TableName,
+
+        Key: { PK: `USER#${creatorId}`, SK: "VERSION" },
+        UpdateExpression: "SET #number = #number + :inc",
+        ExpressionAttributeNames: {
+          "#number": "number",
+        },
+        ExpressionAttributeValues: {
+          ":inc": 1,
+        },
+      },
+    },
+  ];
+
+  const params: TransactWriteCommandInput = {
+    TransactItems,
   };
 
-  const result = await client.send(new UpdateCommand(params));
+  const result = await client.send(new TransactWriteCommand(params));
   if (result) {
     return true;
   }

@@ -4,19 +4,8 @@ import {
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
-import { NativeAttributeValue } from "@aws-sdk/util-dynamodb";
-type UpdateQuestTransaction = {
-  questId: string;
-  attribute: string;
-  text?: string;
-  number?: number;
-};
-type UpdateItemType = {
-  Update?: Omit<Update, "Key" | "ExpressionAttributeValues"> & {
-    Key: Record<string, NativeAttributeValue> | undefined;
-    ExpressionAttributeValues?: Record<string, NativeAttributeValue>;
-  };
-};
+import { UpdateItemType, UpdateQuestTransaction } from "../../utils/types";
+
 export const updateQuestAttributes = async (
   transactions: UpdateQuestTransaction[],
 
@@ -35,8 +24,22 @@ export const updateQuestAttributes = async (
       },
     };
   });
+  const UpdateVersion: UpdateItemType = {
+    Update: {
+      TableName,
+
+      Key: { PK: `USER#${creatorId}`, SK: "VERSION" },
+      UpdateExpression: "SET #number = #number + :inc",
+      ExpressionAttributeNames: {
+        "#number": "number",
+      },
+      ExpressionAttributeValues: {
+        ":inc": 1,
+      },
+    },
+  };
   const params: TransactWriteCommandInput = {
-    TransactItems,
+    TransactItems: [...TransactItems, UpdateVersion],
   };
 
   const result = await client.send(new TransactWriteCommand(params));
