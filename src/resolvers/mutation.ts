@@ -60,7 +60,7 @@ const Mutations: MutationResolvers = {
       return result;
     } catch (error) {
       console.log(error);
-      return null;
+      return false;
     }
   },
   updateQuestAttributes: async (_, args, context) => {

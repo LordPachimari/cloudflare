@@ -28,6 +28,7 @@ export const typeDefs = /* GraphQL */ `
     description: String
     reward: Int
     slots: Int
+    inTrash: Boolean
     published: Boolean
     publishedAt: Date
     creatorId: ID
@@ -79,7 +80,7 @@ export const typeDefs = /* GraphQL */ `
 
   type Mutation {
     createUser(userId: String!): Boolean
-    createQuest(id: String!, creatorId: String!): Quest
+    createQuest(id: String!, creatorId: String!): Boolean
     updateQuestAttributes(
       updateQuestTransactions: [UpdateQuestTransaction]
     ): Boolean

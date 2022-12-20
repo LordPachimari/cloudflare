@@ -34,7 +34,7 @@ export type LastEvaluatedKey = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createQuest?: Maybe<Quest>;
+  createQuest?: Maybe<Scalars['Boolean']>;
   createUser?: Maybe<Scalars['Boolean']>;
   publishQuest?: Maybe<Scalars['Boolean']>;
   test?: Maybe<Scalars['String']>;
@@ -142,6 +142,7 @@ export type Quest = {
   creatorId?: Maybe<Scalars['ID']>;
   description?: Maybe<Scalars['String']>;
   id: Scalars['String'];
+  inTrash?: Maybe<Scalars['Boolean']>;
   published?: Maybe<Scalars['Boolean']>;
   publishedAt?: Maybe<Scalars['Date']>;
   reward?: Maybe<Scalars['Int']>;
@@ -312,7 +313,7 @@ export interface FileScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type MutationResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createQuest?: Resolver<Maybe<ResolversTypes['Quest']>, ParentType, ContextType, RequireFields<MutationCreateQuestArgs, 'creatorId' | 'id'>>;
+  createQuest?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationCreateQuestArgs, 'creatorId' | 'id'>>;
   createUser?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'userId'>>;
   publishQuest?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationPublishQuestArgs, 'id'>>;
   test?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -350,6 +351,7 @@ export type QuestResolvers<ContextType = MyContext, ParentType extends Resolvers
   creatorId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  inTrash?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   published?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   publishedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   reward?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;

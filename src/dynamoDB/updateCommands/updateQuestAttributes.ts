@@ -13,37 +13,48 @@ export const updateQuestAttributes = async (
   client: DynamoDBDocumentClient,
   TableName: string
 ) => {
-  const TransactItems: UpdateItemType[] = transactions.map((t) => {
-    return {
+  const attributes = transactions.map((t) => {
+    return `${t.attribute} = :${t.attribute}`;
+  });
+  const UpdateExpression = `set ${attributes.join(
+    ", "
+  )}, version = version + :inc`;
+  const ExpressionAttributeValues = { ":inc": 1 };
+  transactions.forEach((t) => {
+    ExpressionAttributeValues[`:${t.attribute}`] = t.text ? t.text : t.number;
+  });
+  const questId = transactions[0].questId;
+  const TransactItems: UpdateItemType[] = [
+    {
       Update: {
         TableName,
 
-        Key: { PK: `USER#${creatorId}`, SK: `#QUEST#${t.questId}` },
-        UpdateExpression: `set ${t.attribute} = :value`,
-        ExpressionAttributeValues: { ":value": t.text ? t.text : t.number },
-      },
-    };
-  });
-  const UpdateVersion: UpdateItemType = {
-    Update: {
-      TableName,
-
-      Key: { PK: `USER#${creatorId}`, SK: "VERSION" },
-      UpdateExpression: "SET #number = #number + :inc",
-      ExpressionAttributeNames: {
-        "#number": "number",
-      },
-      ExpressionAttributeValues: {
-        ":inc": 1,
+        Key: { PK: `USER#${creatorId}`, SK: `#QUEST#${questId}` },
+        UpdateExpression,
+        ExpressionAttributeValues,
       },
     },
-  };
+    {
+      Update: {
+        TableName,
+
+        Key: { PK: `USER#${creatorId}`, SK: "VERSION#LIST" },
+        UpdateExpression: "SET #number = #number + :inc",
+        ExpressionAttributeNames: {
+          "#number": "number",
+        },
+        ExpressionAttributeValues: {
+          ":inc": 1,
+        },
+      },
+    },
+  ];
   const params: TransactWriteCommandInput = {
-    TransactItems: [...TransactItems, UpdateVersion],
+    TransactItems,
   };
 
   const result = await client.send(new TransactWriteCommand(params));
-  console.log();
+  console.log("update quest attributes result", result);
   if (result) {
     return true;
   }

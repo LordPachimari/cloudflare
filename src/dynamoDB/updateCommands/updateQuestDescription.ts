@@ -25,15 +25,15 @@ export const updateQuestDescription = async (
         TableName,
 
         Key: { PK: `USER#${creatorId}`, SK: `#QUEST#${questId}` },
-        UpdateExpression: "set description = :value",
-        ExpressionAttributeValues: { ":value": description },
+        UpdateExpression: "set description = :value, version = version + :inc",
+        ExpressionAttributeValues: { ":value": description, ":inc": 1 },
       },
     },
     {
       Update: {
         TableName,
 
-        Key: { PK: `USER#${creatorId}`, SK: "VERSION" },
+        Key: { PK: `USER#${creatorId}`, SK: "VERSION#LIST" },
         UpdateExpression: "SET #number = #number + :inc",
         ExpressionAttributeNames: {
           "#number": "number",
@@ -50,6 +50,7 @@ export const updateQuestDescription = async (
   };
 
   const result = await client.send(new TransactWriteCommand(params));
+  console.log("update quest description result", result);
   if (result) {
     return true;
   }

@@ -27,6 +27,7 @@ type Quest {
   description: String
   reward: Int
   slots: Int
+  inTrash: Boolean
   published: Boolean
   publishedAt: Date
   creatorId: ID
@@ -77,7 +78,7 @@ type Query {
 
 type Mutation {
   createUser(userId: String!): Boolean
-  createQuest(id: String!, creatorId: String!): Quest
+  createQuest(id: String!, creatorId: String!): Boolean
   updateQuestAttributes(
     updateQuestTransactions: [UpdateQuestTransaction]
   ): Boolean

@@ -18,7 +18,7 @@ export const getQuestAndSolutionListVersion = async (
   const params: GetCommandInput = {
     TableName,
 
-    Key: { PK: `USER#${userId}`, SK: `VERSION` },
+    Key: { PK: `USER#${userId}`, SK: `VERSION#LIST` },
   };
 
   const result = await client.send(new GetCommand(params));

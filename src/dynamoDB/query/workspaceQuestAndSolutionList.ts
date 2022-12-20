@@ -23,9 +23,10 @@ export const workspaceQuestAndSolutionList = async (
     },
     ScanIndexForward: true,
 
-    ProjectionExpression: "id, title, topic, subtopic",
+    ProjectionExpression: "id, title, topic, inTrash, version",
   };
   const data = await client.send(new QueryCommand(params));
+  console.log("list result", data);
   if (data.Items?.length === 0) {
     return null;
   } else {

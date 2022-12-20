@@ -6,12 +6,12 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Quest } from "../../generated/graphql";
-interface PublishQuestProps {
+interface TrashProps {
   questId: string;
   creatorId: string;
 }
-export const publishQuest = async (
-  props: PublishQuestProps,
+export const trash = async (
+  props: TrashProps,
   client: DynamoDBDocumentClient,
   TableName: string
 ) => {
@@ -23,25 +23,38 @@ export const publishQuest = async (
         ConditionCheck: {
           Key: { PK: `USER#${creatorId}`, SK: `#QUEST#${questId}` },
           TableName,
-          ConditionExpression: "#published = :published",
-          ExpressionAttributeNames: { "#published": "published" },
-          ExpressionAttributeValues: { ":published": false },
+          ConditionExpression: "#inTrash = :inTrash",
+          ExpressionAttributeNames: { "#inTrash": "inTrash" },
+          ExpressionAttributeValues: { ":inTrash": false },
         },
       },
       {
         Update: {
           Key: { PK: `USER#${creatorId}`, SK: `#QUEST${questId}` },
           TableName,
-          UpdateExpression: "set #published = :value",
-          ExpressionAttributeNames: { "#published": "published" },
+          UpdateExpression: "set #inTrash = :value",
+          ExpressionAttributeNames: { "#inTrash": "inTrash" },
           ExpressionAttributeValues: { ":value": true },
+        },
+      },
+      {
+        Update: {
+          TableName,
+          Key: { PK: `USER#${creatorId}`, SK: "VERSION#LIST" },
+          UpdateExpression: "SET #number = #number + :inc",
+          ExpressionAttributeNames: {
+            "#number": "number",
+          },
+          ExpressionAttributeValues: {
+            ":inc": 1,
+          },
         },
       },
     ],
   };
 
   const result = await client.send(new TransactWriteCommand(params));
-  console.log("publish quest result", result);
+  console.log("trash result", result);
   if (result) {
     return true;
   }
